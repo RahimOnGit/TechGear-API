@@ -1,7 +1,7 @@
 
 const express = require('express');
 const app = express();
-const db = require('./db');
+const db = require('./product');
 
 
 app.use(express.json())
@@ -23,6 +23,10 @@ app.get('/products/search', (req, res) => {
     }
     db.getProductbyName(res, productName);
 });
+
+
+
+
 
 app.get('/products/:id', (req, res) => {
     db.getProductById(res,req.params.id); 
