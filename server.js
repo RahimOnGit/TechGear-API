@@ -86,6 +86,11 @@ if(!name||!email||!phone)
     c.editCustomer(req,res,name,email,phone);
 })
 
+app.get('/customer/:id/orders', (req, res) => {
+    c.getCustomerOrders(req,res,req.params.id); 
+});
+
+
 app.listen(7000, () => {
     console.log('Server started on port 7000');
 });

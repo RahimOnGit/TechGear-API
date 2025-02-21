@@ -36,11 +36,36 @@ res.status(200).json(rows);
 }
 
 
-function getCustomerOrder()
+function getCustomerOrders(req,res,id)
 {
+  const sql = `select
+   ORDERS.ID ,
+    CUSTOMER.NAME as customer_name, 
+    PRODUCT.NAME as product_name , 
+    PRODUCT.PRICE ,
+    ORDER_STATUS.STATUS as order_status,
+    ORDERS.DATE FROM PRODUCT
+JOIN ORDER_DETAILS ON PRODUCT.ID = ORDER_DETAILS.PRODUCT_ID 
+JOIN ORDERS ON ORDER_DETAILS.ORDER_ID = ORDERS.ID
+join CUSTOMER ON CUSTOMER.ID = ORDERS.CUSTOMER_ID
+JOIN ORDER_STATUS ON ORDER_STATUS.ID = ORDERS.ORDERSTATUS_ID
+WHERE CUSTOMER.ID = ?;`;
+
+db.all(sql,[id],(err,rows)=>{
+  if(err)
+  {
+    console.log(`error in fetching data: ${err.message}`)
+  }
+ 
+if(!rows || rows.length==0)
+  {
+     return res.status(404).json({ message: "customer not found"});
+  }
+  res.status(200).json(rows);
+})
 
 }
 
 
 
-module.exports= { getCustomerById,editCustomer,getCustomerOrder};
+module.exports= { getCustomerById,editCustomer,getCustomerOrders};
