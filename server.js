@@ -3,12 +3,31 @@ const express = require('express');
 const app = express();
 const p = require('./product');
 const c = require('./customer');
-
+const a = require('./analysis')
 const db = require('./db');
 
 
 app.use(express.json())
+
+
+//analyze
+// products  stats
+app.get("/products/stats",(req,res)=>{
+    a.getStats(res);
+        
+    })
+
+    //reviews stats
+ app.get("/reviews/stats",(req,res)=>{
+        a.getReviews(res);
+            
+        })
+    
+
 /* products */
+
+
+
 //get all product
 app.get('/products', (req, res) => {
     p.getAllProducts(res); 
@@ -61,7 +80,6 @@ if(!name || !price ||!stock || !category_id|| !manifacture_id)
 })
 
 
-
 //customer 
 app.get('/customer/', (req, res) => {
     db.all(`select * from customer`,(err,rows)=>
@@ -89,6 +107,10 @@ if(!name||!email||!phone)
 app.get('/customer/:id/orders', (req, res) => {
     c.getCustomerOrders(req,res,req.params.id); 
 });
+
+//-----------------------------------------------------
+
+
 
 
 app.listen(7000, () => {
