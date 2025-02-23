@@ -5,7 +5,7 @@ const p = require('./product');
 const c = require('./customer');
 const a = require('./analysis')
 const db = require('./db');
-
+const validator = require('./validator'); 
 
 app.use(express.json())
 
@@ -23,7 +23,7 @@ app.get("/products/stats",(req,res)=>{
             
         })
     
-
+//------------------------------------------------------
 /* products */
 
 
@@ -51,14 +51,10 @@ app.get('/products/:id', (req, res) => {
     p.getProductById(res,req.params.id); 
 });
 //post
-app.post("/products",(req,res)=>{
+app.post("/products",validator.validProudct,(req,res)=>{
 
-const {name , price , stock , category_id, manifacture_id ,review_id} = req.body;
-  if(!name || !price ||!stock || !category_id|| !manifacture_id)
-  {
-    return res.status(500).json({message: "you missed required entry"});
-  }
-db.addProduct(req,res,name , price , stock , category_id, manifacture_id ,review_id);
+const {name , price , stock , category_id, manifacture_id} = req.body;
+p.addProduct(req,res,name , price , stock , category_id, manifacture_id);
 
 })
 //delete by id
@@ -71,13 +67,15 @@ app.delete("/products/:id",(req,res)=>{
 
 //edit   
 app.put("/products/:id",(req,res)=>{
-const {name , price , stock , category_id, manifacture_id ,review_id} = req.body;
+const {name , price , stock , category_id, manifacture_id} = req.body;
 if(!name || !price ||!stock || !category_id|| !manifacture_id)
 {
   return res.status(500).json({message: "you missed required entry"});
 }
     p.editProduct(req,res,name,price,stock,category_id,manifacture_id,review_id);
 })
+
+//--------------------------------------------------------
 
 
 //customer 
@@ -89,20 +87,16 @@ app.get('/customer/', (req, res) => {
     );
 });
 
+app.put('/customer/:id',validator.validCustomer,(req,res)=>{
+    const {name , email , phone} = req.body;
+   
+    c.editCustomer(req,res,name,email,phone);
+})
 
 app.get('/customer/:id', (req, res) => {
     c.getCustomerById(req,res,req.params.id); 
 });
 
-app.put('/customer/:id',(req,res)=>{
-    const {name , email , phone} = req.body;
-   
-if(!name||!email||!phone)
-{
-    return res.status(400).json({message:" u missed a required entity"})
-}
-    c.editCustomer(req,res,name,email,phone);
-})
 
 app.get('/customer/:id/orders', (req, res) => {
     c.getCustomerOrders(req,res,req.params.id); 

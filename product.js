@@ -79,7 +79,7 @@ join manifacture on manifacture.ID = product.MANIFACTURE_ID;`
 
 
 //add new product
-function addProduct(req,res,name,price,stock,category_id,manifacture_id,review_id=null)
+function addProduct(req,res,name,price,stock,category_id,manifacture_id)
 {
 
     const sql = `INSERT INTO PRODUCT
@@ -88,32 +88,49 @@ function addProduct(req,res,name,price,stock,category_id,manifacture_id,review_i
     PRICE,
     STOCK,
     CATEGORY_ID,
-    MANIFACTURE_ID,
-    REVIEW_ID
-    ) VALUES(?,?,?,?,?,?)`;
-    db.run(sql,[name,price,stock,category_id,manifacture_id,review_id],err=>{
+    MANIFACTURE_ID
+    ) VALUES(?,?,?,?,?)`;
+    db.run(sql,[name,price,stock,category_id,manifacture_id],err=>{
      
         if (err) {
            
-            return res.status(500).json({ message: `Error creating new product: ${err.message}` });
+            return res.status(404).json({ message: `Error creating new product: ${err.message}` });
         } 
+   
+        res.status(200).json({message:"sucessfully added", product_id: this.lastID
+            ,name,price,stock,category_id,manifacture_id})
     });
 
-res.status(200).json({message:"sucessfully added", product_id: this.lastID
-    ,name,price,stock,category_id,manifacture_id,review_id
-})
+
 }
 //delete
 function deleteProduct(req,res,product_id)
 {
+db.get('select id , name from product where id = ?',[product_id],(err,row)=>
+{
+    if(!row)
+        {
+            return res.status(500).json({ message: `product not found` });
+  
+        }
+
+        
 const sql = `delete from product where id = ?`;
 db.run(sql,[product_id],(err)=>{
     if(err)
     {
         return res.status(500).json({ message: `Error deleting product: ${err.message}` });
     }
-    res.status(200).json({message:`sucessfully deleted ${product_id}`});
+    if(!product_id)
+    {
+         return res.status(404).json({ message: `product not found` });
+  
+    }
+    res.status(200).json({message:`sucessfully deleted id : ${product_id}`});
 })
+})
+
+
 }
 
 
