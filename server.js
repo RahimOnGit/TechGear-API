@@ -30,7 +30,7 @@ app.get("/products/stats",(req,res)=>{
 
 //get all product
 app.get('/products', (req, res) => {
-    p.getAllProducts(res); 
+    p.getAllProducts(req,res); 
 });
 
 //search by category

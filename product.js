@@ -59,22 +59,35 @@ function getProductByCategory(res,id)
     });
 }
 
+//advanced .. pagination
+function getAllProducts(req,res) {
+db.get('select count(*) as product_counter from  product',(err,row)=>
+{
+const page = parseInt(req.query.page)||1;
+const limit = parseInt(req.query.limit)||2;
+const offset = (page-1) * limit;
+if(page+limit+1  >= row.product_counter)
+{
+    return res.status(404).json({ message: `NO MORE PRODUCTS` });    
+}
 
-function getAllProducts(res) {
-
-    const sql = `select product.*,
+const sql = `
+select product.*,
     category.name as category_name,
      manifacture.name as manifacture_name
       from product 
 join category on category.ID = product.CATEGORY_ID
-join manifacture on manifacture.ID = product.MANIFACTURE_ID;`
-    db.all(sql, [], (err, rows) => { 
+join manifacture on manifacture.ID = product.MANIFACTURE_ID limit ? offset ?`
+    db.all(sql, [limit,offset], (err, rows) => { 
         if (err) {
             console.error("Database error in getAllProducts:", err);
             return res.status(500).json({ message: `Error fetching products: ${err.message}` });
         }
-        res.json(rows);
+        res.status(200).json(rows);
     });
+})
+
+
 }
 
 
@@ -180,6 +193,11 @@ function editProduct(req,res,name,price,stock,category_id,manifacture_id,review_
 
 
 }
+
+
+//Pagination
+//
+
 
 module.exports = {
     getProductbyName,
