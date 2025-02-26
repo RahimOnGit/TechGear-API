@@ -85,7 +85,7 @@ join manifacture on manifacture.ID = product.MANIFACTURE_ID limit ? offset ?`
            return res.status(404).json({ message: `NO MORE PRODUCTS` });    
 
         }
-        res.status(200).json(rows);
+        res.status(200).json({message : `total products : ${row.product_counter} ,  page : ${page} , products per page : ${limit}`, products : rows});
     });
 })
 
