@@ -39,7 +39,7 @@ res.status(200).json(rows);
 function getCustomerOrders(req,res,id)
 {
   const sql = `select
-   ORDERS.ID ,
+   
     CUSTOMER.NAME as customer_name, 
     PRODUCT.NAME as product_name , 
     PRODUCT.PRICE ,

@@ -1,3 +1,4 @@
+const { isEmpty } = require('validator');
 const db = require('./db');
 
 function getProductbyName(res, name) {
@@ -64,12 +65,8 @@ function getAllProducts(req,res) {
 db.get('select count(*) as product_counter from  product',(err,row)=>
 {
 const page = parseInt(req.query.page)||1;
-const limit = parseInt(req.query.limit)||2;
+const limit = parseInt(req.query.limit)||5;
 const offset = (page-1) * limit;
-if(page+limit+1  >= row.product_counter)
-{
-    return res.status(404).json({ message: `NO MORE PRODUCTS` });    
-}
 
 const sql = `
 select product.*,
@@ -82,6 +79,11 @@ join manifacture on manifacture.ID = product.MANIFACTURE_ID limit ? offset ?`
         if (err) {
             console.error("Database error in getAllProducts:", err);
             return res.status(500).json({ message: `Error fetching products: ${err.message}` });
+        }
+        if(!rows||rows.length===0)
+        {
+           return res.status(404).json({ message: `NO MORE PRODUCTS` });    
+
         }
         res.status(200).json(rows);
     });
@@ -110,7 +112,7 @@ function addProduct(req,res,name,price,stock,category_id,manifacture_id)
             return res.status(404).json({ message: `Error creating new product: ${err.message}` });
         } 
    
-        res.status(200).json({message:"sucessfully added", product_id: this.lastID
+        res.status(201).json({message:"sucessfully added", product_id: this.lastID
             ,name,price,stock,category_id,manifacture_id})
     });
 
@@ -123,7 +125,7 @@ db.get('select id , name from product where id = ?',[product_id],(err,row)=>
 {
     if(!row)
         {
-            return res.status(500).json({ message: `product not found` });
+            return res.status(404).json({ message: `product not found` });
   
         }
 
@@ -139,7 +141,7 @@ db.run(sql,[product_id],(err)=>{
          return res.status(404).json({ message: `product not found` });
   
     }
-    res.status(200).json({message:`sucessfully deleted id : ${product_id}`});
+    res.status(202).json({message:`sucessfully deleted id : ${product_id}`});
 })
 })
 
@@ -166,7 +168,7 @@ db.run(sql,[product_id],(err)=>{
 
 
 //update (edit)
-function editProduct(req,res,name,price,stock,category_id,manifacture_id,review_id=null)
+function editProduct(req,res,name,price,stock,category_id,manifacture_id)
 {
 
     const sql = ` UPDATE PRODUCT
@@ -175,10 +177,9 @@ function editProduct(req,res,name,price,stock,category_id,manifacture_id,review_
     PRICE = ?,
     STOCK = ?,
     CATEGORY_ID = ?,
-    MANIFACTURE_ID = ?,
-    REVIEW_ID = ?
+    MANIFACTURE_ID = ?
     WHERE ID = ?`;
-    db.run(sql,[name,price,stock,category_id,manifacture_id,review_id,req.params.id],err=>{
+    db.run(sql,[name,price,stock,category_id,manifacture_id,req.params.id],err=>{
      
         if(err)
             {
@@ -186,8 +187,8 @@ function editProduct(req,res,name,price,stock,category_id,manifacture_id,review_
     
             }
 
-            res.status(200).json({message:"sucessfully updated", product_id: this.lastID
-                ,name,price,stock,category_id,manifacture_id,review_id
+            res.status(202).json({message:"sucessfully updated", product_id: this.lastID
+                ,name,price,stock,category_id,manifacture_id
             })
     });
 
@@ -195,8 +196,7 @@ function editProduct(req,res,name,price,stock,category_id,manifacture_id,review_
 }
 
 
-//Pagination
-//
+
 
 
 module.exports = {

@@ -72,7 +72,7 @@ if(!name || !price ||!stock || !category_id|| !manifacture_id)
 {
   return res.status(500).json({message: "you missed required entry"});
 }
-    p.editProduct(req,res,name,price,stock,category_id,manifacture_id,review_id);
+    p.editProduct(req,res,name,price,stock,category_id,manifacture_id);
 })
 
 //--------------------------------------------------------
@@ -86,7 +86,7 @@ app.get('/customer/', (req, res) => {
     }
     );
 });
-
+ 
 app.put('/customer/:id',validator.validCustomer,(req,res)=>{
     const {name , email , phone} = req.body;
    

@@ -7,7 +7,7 @@ const db = require('./db');
 function getStats(res)
 {
 const sql = `SELECT category.NAME as category_name, COUNT(product.ID) AS amount_products ,
-  round(avg(product.PRICE),2)  as price_per_category  
+  round(avg(product.PRICE),2)  as average_price_per_category  
 FROM product
 join category on category.ID = product.CATEGORY_ID
 GROUP BY product.CATEGORY_ID;`;
@@ -32,7 +32,7 @@ res.status(400).json({message: err.message});
 //
 function getReviews(res)
 {
-const sql = `select product.NAME as product_name, avg(review.RATE) as average_rating
+const sql = `select product.NAME as product_name, avg(review.RATE) as average_rating , review.COMMENT
 from review
 join product on product.ID = review.PRODUCT_ID
 group by product.NAME;
