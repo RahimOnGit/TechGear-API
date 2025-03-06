@@ -66,12 +66,8 @@ app.delete("/products/:id",(req,res)=>{
 });
 
 //edit   
-app.put("/products/:id",(req,res)=>{
+app.put("/products/:id",validator.validProudct,(req,res)=>{
 const {name , price , stock , category_id, manifacture_id} = req.body;
-if(!name || !price ||!stock || !category_id|| !manifacture_id)
-{
-  return res.status(500).json({message: "you missed required entry"});
-}
     p.editProduct(req,res,name,price,stock,category_id,manifacture_id);
 })
 

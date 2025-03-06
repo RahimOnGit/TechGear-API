@@ -88,8 +88,6 @@ join manifacture on manifacture.ID = product.MANIFACTURE_ID limit ? offset ?`
         res.status(200).json({message : `total products : ${row.product_counter} ,  page : ${page} , products per page : ${limit}`, products : rows});
     });
 })
-
-
 }
 
 
@@ -109,7 +107,7 @@ function addProduct(req,res,name,price,stock,category_id,manifacture_id)
      
         if (err) {
            
-            return res.status(404).json({ message: `Error creating new product: ${err.message}` });
+            return res.status(500).json({ message: `Error creating new product: ${err.message}` });
         } 
    
         res.status(201).json({message:"sucessfully added", product_id: this.lastID

@@ -23,7 +23,7 @@ function editCustomer(req, res, name, email, phone) {
 function getCustomerById(req,res,id)
 {
 const sql = `select customer.*,orders.ID as order_number, orders.DATE  from customer 
-join orders on orders.CUSTOMER_ID = customer.ID
+left join orders on orders.CUSTOMER_ID = customer.ID
 where customer.ID = ?;  `;
 db.all(sql,[id],(err,rows)=>{
 

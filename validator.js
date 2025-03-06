@@ -42,9 +42,15 @@ function validCustomer(req,res,next)
 const { name , email , phone } = req.body;    
     if(!name||!email||!phone)
     {
-        return res.status(400).json({message:" u missed a required entity"})
+        return res.status(400).json({message:" u missed a required entry"})
     }
-
+if(name.trim()==="")
+{
+  
+  return res.status(400).json({message:"customer name cannot be empty"});
+  
+    
+}
     if(!valid.isEmail(email))
     {
         return res.status(400).json({message:" enter a valid email"});
